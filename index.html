@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>토스에서 열기</title>
+<style>
+  body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#f4f5f7;color:#191f28;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px;box-sizing:border-box}
+  main{max-width:360px;width:100%;text-align:center}
+  h1{font-size:20px;margin:0 0 6px}
+  p{color:#6b7684;font-size:14px;margin:0 0 20px;word-break:break-all}
+  a.btn{display:block;background:#3182f6;color:#fff;text-decoration:none;font-size:17px;font-weight:600;padding:16px;border-radius:14px}
+  code{display:block;margin-top:20px;font-size:11px;color:#8b95a1;word-break:break-all;user-select:all}
+  .err{color:#e5484d}
+</style>
+</head>
+<body>
+<main>
+  <h1 id="t">토스에서 열기</h1>
+  <p id="s"></p>
+  <a class="btn" id="b" href="#" hidden>토스 앱으로 열기</a>
+  <code id="u"></code>
+</main>
+<script>
+// 테스트 배포 링크(intoss-private://)는 디스코드·텔레그램에서 링크가 안 걸린다.
+// 이 페이지가 https 로 받아 토스 앱 주소로 넘긴다. 저장하는 것 없음.
+// 쓰는 법: ?app=<appName>&d=<deploymentId>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var app = q.get("app") || "", d = q.get("d") || "";
+  var s = document.getElementById("s");
+  // 토스 앱 주소 말고는 절대 만들지 않는다(열린 리다이렉트 금지)
+  if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(app) || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(d)) {
+    s.textContent = "주소가 올바르지 않아요 (?app=…&d=…)";
+    s.className = "err";
+    return;
+  }
+  var url = "intoss-private://" + app + "?_deploymentId=" + d + "&host=appsInTossHost";
+  s.textContent = app + " · 테스트 배포 " + d.slice(0, 13) + "…";
+  var b = document.getElementById("b");
+  b.href = url;
+  b.hidden = false;
+  document.getElementById("u").textContent = url;
+  try { location.href = url; } catch (e) {}
+})();
+</script>
+</body>
+</html>
