@@ -25,10 +25,10 @@
 <script>
 // 테스트 배포 링크(intoss-private://)는 디스코드·텔레그램에서 링크가 안 걸린다.
 // 이 페이지가 https 로 받아 토스 앱 주소로 넘긴다. 저장하는 것 없음.
-// 쓰는 법: ?app=<appName>&d=<deploymentId>
+// 쓰는 법: ?app=<appName>&d=<deploymentId>[&p=<경로 — 주요 기능 시험용 · 예 brand>] (2026-10-06 p 추가)
 (function () {
   var q = new URLSearchParams(location.search);
-  var app = q.get("app") || "", d = q.get("d") || "";
+  var app = q.get("app") || "", d = q.get("d") || "", p = q.get("p") || "";
   var s = document.getElementById("s");
   // 토스 앱 주소 말고는 절대 만들지 않는다(열린 리다이렉트 금지)
   if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(app) || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(d)) {
@@ -36,7 +36,8 @@
     s.className = "err";
     return;
   }
-  var url = "intoss-private://" + app + "?_deploymentId=" + d + "&host=appsInTossHost";
+  if (p && !/^[a-z0-9][a-z0-9/_-]{0,40}$/.test(p)) { s.textContent = "경로가 올바르지 않아요 (&p=…)"; s.className = "err"; return; }
+  var url = "intoss-private://" + app + (p ? "/" + p : "") + "?_deploymentId=" + d + "&host=appsInTossHost";
   s.textContent = app + " · 테스트 배포 " + d.slice(0, 13) + "…";
   var b = document.getElementById("b");
   b.href = url;
